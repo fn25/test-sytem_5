@@ -818,11 +818,16 @@ async function joinQuiz(event) {
         
         if (response.ok) {
             currentQuizId = data.quizId;
+            window.currentQuizMode = data.mode;
             localStorage.setItem('currentUsername', username);
             
-            socket.emit('joinRoom', { code, username });
+            socket.emit('join-room', { code, username });
             
-            await startQuiz(data.quizId, username);
+            if (data.mode === 'synchronized') {
+                setupSynchronizedQuiz(data.quizId, username);
+            } else {
+                await startQuiz(data.quizId, username);
+            }
         } else {
             console.error('Failed to join quiz:', data.message);
         }
@@ -1106,6 +1111,7 @@ function showQuestion() {
     question.variants.forEach((variant, index) => {
         const variantDiv = document.createElement('div');
         variantDiv.className = 'variant-option';
+        variantDiv.dataset.variantId = variant.id;
         variantDiv.innerHTML = `
             <span class="variant-letter">${String.fromCharCode(65 + index)}</span>
             <span>${variant.variant_text}</span>
@@ -1345,6 +1351,9 @@ async function openPresentation(quizId, quizTitle, quizCode) {
     console.log('=== OPENING PRESENTATION MODE ===');
     console.log('Quiz ID:', quizId, 'Title:', quizTitle, 'Code:', quizCode);
     
+    window.currentPresentationQuizId = quizId;
+    window.currentPresentationCode = quizCode;
+    
     try {
         const response = await fetch(`${API_URL}/quizzes/code/${quizCode}`);
         const quiz = await response.json();
@@ -1356,6 +1365,10 @@ async function openPresentation(quizId, quizTitle, quizCode) {
         document.getElementById('presentationCode').textContent = quizCode;
         document.getElementById('presentationUrl').textContent = window.location.origin;
         document.getElementById('questionsCount').textContent = quiz.questions?.length || 0;
+        
+        if (quiz.mode === 'synchronized') {
+            document.getElementById('adminControls').style.display = 'block';
+        }
         
         const qrcodeDiv = document.getElementById('qrcodeCanvas');
         qrcodeDiv.innerHTML = '';
@@ -1379,12 +1392,18 @@ async function openPresentation(quizId, quizTitle, quizCode) {
             await presentationSection.msRequestFullscreen();
         }
         
-        socket.emit('join-room', quizCode);
+        socket.emit('join-room', { code: quizCode, username: 'Admin' });
+        
         socket.on('user-joined', (data) => {
             console.log('User joined:', data);
-            updateParticipantCount();
+            loadParticipants();
         });
         
+        socket.on('participant-count', (count) => {
+            document.getElementById('participantsCount').textContent = count;
+        });
+        
+        loadParticipants();
         updateParticipantCount();
         
     } catch (error) {
@@ -1393,7 +1412,83 @@ async function openPresentation(quizId, quizTitle, quizCode) {
 }
 
 function updateParticipantCount() {
-    socket.emit('get-participants', currentQuizCode);
+    socket.emit('get-participants', window.currentPresentationCode);
+}
+
+async function loadParticipants() {
+    if (!window.currentPresentationQuizId) return;
+    
+    try {
+        const response = await fetch(`${API_URL}/quizzes/${window.currentPresentationQuizId}/participants`);
+        const participants = await response.json();
+        
+        const namesDiv = document.getElementById('participantsNames');
+        namesDiv.innerHTML = participants.map(p => 
+            `<div style="background: rgba(255,255,255,0.2); padding: 8px; border-radius: 5px;">${p.username}</div>`
+        ).join('');
+        
+        document.getElementById('participantsCount').textContent = participants.length;
+    } catch (error) {
+        console.error('Error loading participants:', error);
+    }
+}
+
+async function startSyncQuiz() {
+    document.getElementById('pauseBtn').style.display = 'inline-block';
+    document.getElementById('nextBtn').style.display = 'inline-block';
+    socket.emit('admin-next-question', { code: window.currentPresentationCode, questionIndex: 0 });
+    
+    try {
+        await fetch(`${API_URL}/quizzes/${window.currentPresentationQuizId}/next`, {
+            method: 'POST',
+            headers: { 'x-auth-token': token }
+        });
+    } catch (error) {
+        console.error('Error starting quiz:', error);
+    }
+}
+
+async function pauseSyncQuiz() {
+    document.getElementById('pauseBtn').style.display = 'none';
+    document.getElementById('resumeBtn').style.display = 'inline-block';
+    socket.emit('admin-pause', { code: window.currentPresentationCode });
+    
+    try {
+        await fetch(`${API_URL}/quizzes/${window.currentPresentationQuizId}/pause`, {
+            method: 'POST',
+            headers: { 'x-auth-token': token }
+        });
+    } catch (error) {
+        console.error('Error pausing quiz:', error);
+    }
+}
+
+async function resumeSyncQuiz() {
+    document.getElementById('resumeBtn').style.display = 'none';
+    document.getElementById('pauseBtn').style.display = 'inline-block';
+    socket.emit('admin-resume', { code: window.currentPresentationCode });
+    
+    try {
+        await fetch(`${API_URL}/quizzes/${window.currentPresentationQuizId}/resume`, {
+            method: 'POST',
+            headers: { 'x-auth-token': token }
+        });
+    } catch (error) {
+        console.error('Error resuming quiz:', error);
+    }
+}
+
+async function nextSyncQuestion() {
+    try {
+        const response = await fetch(`${API_URL}/quizzes/${window.currentPresentationQuizId}/next`, {
+            method: 'POST',
+            headers: { 'x-auth-token': token }
+        });
+        const data = await response.json();
+        socket.emit('admin-next-question', { code: window.currentPresentationCode, questionIndex: data.questionIndex });
+    } catch (error) {
+        console.error('Error advancing question:', error);
+    }
 }
 
 socket.on('participant-count', (count) => {
@@ -1412,6 +1507,60 @@ function exitPresentation() {
     }
     
     showMyQuizzes();
+}
+
+async function setupSynchronizedQuiz(quizId, username) {
+    try {
+        const headers = {};
+        if (token) {
+            headers['x-auth-token'] = token;
+        }
+        
+        const response = await fetch(`${API_URL}/quizzes/${quizId}/questions`, {
+            headers: headers
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Failed to load quiz questions:', errorData.message);
+            return;
+        }
+        
+        const questions = await response.json();
+        currentQuestions = questions;
+        currentQuestionIndex = -1;
+        score = 0;
+        
+        showQuizPlay();
+        
+        document.getElementById('questionContainer').innerHTML = '<div style="text-align:center; padding:50px; font-size:24px;">Kutib turing... Admin test boshlaydi</div>';
+        
+        socket.on('show-question', (data) => {
+            currentQuestionIndex = data.questionIndex;
+            showQuestion();
+        });
+        
+        socket.on('quiz-paused', () => {
+            clearInterval(timerInterval);
+            document.getElementById('questionContainer').innerHTML += '<div style="color:orange; text-align:center; margin-top:20px; font-size:20px;">⏸️ PAUZA</div>';
+        });
+        
+        socket.on('quiz-resumed', () => {
+            showQuestion();
+        });
+        
+        socket.on('show-correct-answer', (data) => {
+            document.querySelectorAll('.variant-option').forEach(div => {
+                const variantId = parseInt(div.dataset.variantId);
+                if (variantId === data.correctVariantId) {
+                    div.style.background = '#4CAF50';
+                }
+            });
+        });
+        
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
 if (token) {
