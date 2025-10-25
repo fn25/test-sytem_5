@@ -23,4 +23,23 @@ router.post('/init', async (req, res) => {
   }
 });
 
+// POST /api/admin/migrate
+// Run migration to add quiz modes
+router.post('/migrate', async (req, res) => {
+  const provided = req.headers['x-admin-token'] || req.body?.token;
+  if (!process.env.ADMIN_INIT_TOKEN || provided !== process.env.ADMIN_INIT_TOKEN) {
+    return res.status(403).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const migrationPath = path.join(__dirname, '..', 'models', 'add_quiz_modes.sql');
+    const migration = fs.readFileSync(migrationPath, 'utf8');
+    await pool.query(migration);
+    return res.json({ ok: true, message: 'Migration completed successfully' });
+  } catch (err) {
+    console.error('Error running migration:', err);
+    return res.status(500).json({ error: err.message || 'Migration failed' });
+  }
+});
+
 module.exports = router;
