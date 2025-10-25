@@ -491,12 +491,15 @@ async function createQuiz(event) {
         if (response.ok) {
             console.log('=== CREATE QUIZ SUCCESS ===');
             
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Create Quiz';
+            // Reset form and button
             document.getElementById('createQuizForm').reset();
             document.getElementById('questionsContainer').innerHTML = '';
             addQuestion();
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Create Quiz';
             
+            // Show success message and redirect to My Quizzes
+            alert('✅ Test muvaffaqiyatli yaratildi!');
             showMyQuizzes();
         } else {
             console.error('Failed to create quiz:', data.message);
