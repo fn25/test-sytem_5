@@ -14,6 +14,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/quizzes', require('./src/routes/quizzes'));
+// Temporary admin route for remote DB initialization (remove after use)
+app.use('/api/admin', require('./src/routes/admin'));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
