@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS participants CASCADE;
 DROP TABLE IF EXISTS results CASCADE;
 DROP TABLE IF EXISTS variants CASCADE;
 DROP TABLE IF EXISTS questions CASCADE;
@@ -5,9 +6,11 @@ DROP TABLE IF EXISTS quizzes CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS user_role CASCADE;
 DROP TYPE IF EXISTS quiz_status CASCADE;
+DROP TYPE IF EXISTS quiz_mode CASCADE;
 
 CREATE TYPE user_role AS ENUM ('student', 'admin');
 CREATE TYPE quiz_status AS ENUM ('pending', 'live', 'finished');
+CREATE TYPE quiz_mode AS ENUM ('synchronized', 'self_paced_immediate', 'self_paced_end');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -24,6 +27,10 @@ CREATE TABLE quizzes (
     code VARCHAR(6) UNIQUE NOT NULL,
     creator_id INTEGER REFERENCES users(id),
     status quiz_status NOT NULL DEFAULT 'pending',
+    mode quiz_mode NOT NULL DEFAULT 'self_paced_immediate',
+    current_question_index INTEGER DEFAULT 0,
+    is_paused BOOLEAN DEFAULT FALSE,
+    show_correct_answer BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -49,4 +56,13 @@ CREATE TABLE results (
     guest_name VARCHAR(255),
     score INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE participants (
+    id SERIAL PRIMARY KEY,
+    quiz_id INTEGER NOT NULL REFERENCES quizzes(id) ON DELETE CASCADE,
+    username VARCHAR(255) NOT NULL,
+    user_id INTEGER REFERENCES users(id),
+    joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(quiz_id, username)
 );

@@ -387,9 +387,11 @@ async function createQuiz(event) {
     console.log('=== CREATE QUIZ STARTED ===');
     
     const title = document.getElementById('quizTitle').value;
+    const mode = document.getElementById('quizMode').value;
     const questionBlocks = document.querySelectorAll('.question-block');
     
     console.log('Quiz title:', title);
+    console.log('Quiz mode:', mode);
     console.log('Number of questions:', questionBlocks.length);
     
     const questions = [];
@@ -479,7 +481,7 @@ async function createQuiz(event) {
                 'Content-Type': 'application/json',
                 'x-auth-token': token
             },
-            body: JSON.stringify({ title, questions })
+            body: JSON.stringify({ title, mode, questions })
         });
         
         console.log('Response status:', response.status);
@@ -874,6 +876,17 @@ function showQuestion() {
     
     const question = currentQuestions[currentQuestionIndex];
     
+    if (!question || !question.variants || question.variants.length === 0) {
+        console.error('Invalid question data:', question);
+        currentQuestionIndex++;
+        if (currentQuestionIndex < currentQuestions.length) {
+            showQuestion();
+        } else {
+            finishQuiz();
+        }
+        return;
+    }
+    
     console.log('Current question:', question);
     console.log('Media URL:', question.media_url);
     
@@ -1083,6 +1096,12 @@ function showQuestion() {
     
     const variantsContainer = document.getElementById('variantsContainer');
     variantsContainer.innerHTML = '';
+    variantsContainer.style.pointerEvents = 'auto';
+    
+    if (!question.variants || question.variants.length === 0) {
+        console.error('No variants for question:', question);
+        return;
+    }
     
     question.variants.forEach((variant, index) => {
         const variantDiv = document.createElement('div');

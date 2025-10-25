@@ -23,5 +23,9 @@ router.get('/my-quizzes', [authMiddleware, adminMiddleware], quizController.getM
 router.post('/submit-answer', quizController.submitAnswer);
 router.post('/save-result', quizController.saveResult);
 router.get('/:quizId/leaderboard', quizController.getLeaderboard);
+router.get('/:quizId/participants', quizController.getParticipants);
+router.post('/:quizId/next', [authMiddleware, adminMiddleware], quizController.nextQuestionAdmin);
+router.post('/:quizId/pause', [authMiddleware, adminMiddleware], quizController.pauseQuiz);
+router.post('/:quizId/resume', [authMiddleware, adminMiddleware], quizController.resumeQuiz);
 
 module.exports = router;

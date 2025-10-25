@@ -2,20 +2,22 @@ const pool = require('../config/db');
 const { customAlphabet } = require('nanoid');
 
 const createQuiz = async (req, res) => {
-    const { title, questions } = req.body;
+    const { title, mode, questions } = req.body;
     const creator_id = req.user.id;
 
     if (!title || !questions || !Array.isArray(questions) || questions.length === 0) {
         return res.status(400).json({ message: 'Invalid quiz data.' });
     }
+    
+    const quizMode = mode || 'self_paced_immediate';
 
     const nanoid = customAlphabet('1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ', 6);
     const code = nanoid();
 
     try {
         const newQuizResult = await pool.query(
-            'INSERT INTO quizzes (title, code, creator_id) VALUES ($1, $2, $3) RETURNING id',
-            [title, code, creator_id]
+            'INSERT INTO quizzes (title, code, creator_id, mode) VALUES ($1, $2, $3, $4) RETURNING id',
+            [title, code, creator_id, quizMode]
         );
         const quizId = newQuizResult.rows[0].id;
 
@@ -104,23 +106,28 @@ const goLive = async (req, res) => {
 
 const joinQuiz = async (req, res) => {
     const { code, username } = req.body;
+    const userId = req.user?.id || null;
 
     if (!code || !username) {
         return res.status(400).json({ message: 'Please provide quiz code and username.' });
     }
 
     try {
-        const quizResult = await pool.query('SELECT id FROM quizzes WHERE code = $1 AND status = $2', [code, 'live']);
+        const quizResult = await pool.query('SELECT id, mode FROM quizzes WHERE code = $1 AND status = $2', [code, 'live']);
 
         if (quizResult.rows.length === 0) {
             return res.status(404).json({ message: 'Live quiz not found with this code.' });
         }
         
         const quizId = quizResult.rows[0].id;
+        const quizMode = quizResult.rows[0].mode;
 
-        // Here you would typically associate the guest user with a session or a temporary record.
-        // For simplicity, we'll just return the quiz ID.
-        res.json({ message: 'Joined quiz successfully.', quizId });
+        await pool.query(
+            'INSERT INTO participants (quiz_id, username, user_id) VALUES ($1, $2, $3) ON CONFLICT (quiz_id, username) DO NOTHING',
+            [quizId, username, userId]
+        );
+
+        res.json({ message: 'Joined quiz successfully.', quizId, mode: quizMode });
 
     } catch (error) {
         console.error(error);
@@ -342,6 +349,105 @@ const getQuizById = async (req, res) => {
     }
 };
 
+const getParticipants = async (req, res) => {
+    const { quizId } = req.params;
+    
+    try {
+        const participants = await pool.query(
+            'SELECT username, joined_at FROM participants WHERE quiz_id = $1 ORDER BY joined_at',
+            [quizId]
+        );
+        res.json(participants.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const nextQuestionAdmin = async (req, res) => {
+    const { quizId } = req.params;
+    const creatorId = req.user.id;
+    
+    try {
+        const quizCheck = await pool.query(
+            'SELECT creator_id, current_question_index FROM quizzes WHERE id = $1',
+            [quizId]
+        );
+        
+        if (quizCheck.rows.length === 0) {
+            return res.status(404).json({ message: 'Quiz not found' });
+        }
+        
+        if (quizCheck.rows[0].creator_id !== creatorId) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+        
+        const newIndex = quizCheck.rows[0].current_question_index + 1;
+        
+        await pool.query(
+            'UPDATE quizzes SET current_question_index = $1 WHERE id = $2',
+            [newIndex, quizId]
+        );
+        
+        res.json({ message: 'Advanced to next question', questionIndex: newIndex });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const pauseQuiz = async (req, res) => {
+    const { quizId } = req.params;
+    const creatorId = req.user.id;
+    
+    try {
+        const quizCheck = await pool.query(
+            'SELECT creator_id FROM quizzes WHERE id = $1',
+            [quizId]
+        );
+        
+        if (quizCheck.rows.length === 0 || quizCheck.rows[0].creator_id !== creatorId) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+        
+        await pool.query(
+            'UPDATE quizzes SET is_paused = TRUE WHERE id = $1',
+            [quizId]
+        );
+        
+        res.json({ message: 'Quiz paused' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+const resumeQuiz = async (req, res) => {
+    const { quizId } = req.params;
+    const creatorId = req.user.id;
+    
+    try {
+        const quizCheck = await pool.query(
+            'SELECT creator_id FROM quizzes WHERE id = $1',
+            [quizId]
+        );
+        
+        if (quizCheck.rows.length === 0 || quizCheck.rows[0].creator_id !== creatorId) {
+            return res.status(403).json({ message: 'Not authorized' });
+        }
+        
+        await pool.query(
+            'UPDATE quizzes SET is_paused = FALSE WHERE id = $1',
+            [quizId]
+        );
+        
+        res.json({ message: 'Quiz resumed' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     createQuiz,
     uploadImage,
@@ -355,5 +461,9 @@ module.exports = {
     updateQuiz,
     getMyQuizzes,
     stopLive,
-    getQuizById
+    getQuizById,
+    getParticipants,
+    nextQuestionAdmin,
+    pauseQuiz,
+    resumeQuiz
 };

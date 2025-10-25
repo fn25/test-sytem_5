@@ -112,6 +112,16 @@
                         <label for="quizTitle">Quiz Title</label>
                         <input type="text" id="quizTitle" placeholder="Enter quiz title" required>
                     </div>
+                    
+                    <div class="form-group">
+                        <label for="quizMode">Quiz Mode</label>
+                        <select id="quizMode" required>
+                            <option value="synchronized">Synchronized (Admin controls, everyone sees same question)</option>
+                            <option value="self_paced_immediate" selected>Self-Paced (Show answers immediately)</option>
+                            <option value="self_paced_end">Self-Paced (Show answers at end)</option>
+                        </select>
+                    </div>
+                    
                     <div id="questionsContainer">
                         <div class="question-block">
                             <h3>Question 1</h3>
@@ -192,6 +202,25 @@
                         <div style="font-size: 24px; color: rgba(255,255,255,0.9);">
                             📝 Savollar soni: <span id="questionsCount"></span>
                         </div>
+                        <div id="participantsList" style="margin-top: 30px; max-height: 300px; overflow-y: auto; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                            <h3 style="margin-top: 0;">Qo'shilganlar:</h3>
+                            <div id="participantsNames" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; font-size: 18px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="adminControls" style="margin-top: 40px; display: none;">
+                        <button onclick="startSyncQuiz()" style="padding: 15px 40px; font-size: 20px; background: #4CAF50; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px;">
+                            ▶️ Testni Boshlash
+                        </button>
+                        <button onclick="pauseSyncQuiz()" id="pauseBtn" style="padding: 15px 40px; font-size: 20px; background: #FF9800; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ⏸️ Pauza
+                        </button>
+                        <button onclick="resumeSyncQuiz()" id="resumeBtn" style="padding: 15px 40px; font-size: 20px; background: #4CAF50; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ▶️ Davom ettirish
+                        </button>
+                        <button onclick="nextSyncQuestion()" id="nextBtn" style="padding: 15px 40px; font-size: 20px; background: #2196F3; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ⏭️ Keyingi savol
+                        </button>
                     </div>
                 </div>
             </div>

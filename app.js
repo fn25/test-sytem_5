@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/api/auth', require('./src/routes/auth'));
 app.use('/api/quizzes', require('./src/routes/quizzes'));
-// Temporary admin route for remote DB initialization (remove after use)
+
 app.use('/api/admin', require('./src/routes/admin'));
 
 app.get('/', (req, res) => {
@@ -24,10 +24,30 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('joinRoom', ({ code, username }) => {
+    socket.on('join-room', ({ code, username }) => {
         socket.join(code);
         console.log(`${username} joined room ${code}`);
-        socket.to(code).emit('userJoined', `${username} has joined the quiz.`);
+        io.to(code).emit('user-joined', { username, timestamp: new Date() });
+        
+        const room = io.sockets.adapter.rooms.get(code);
+        const participantCount = room ? room.size : 0;
+        io.to(code).emit('participant-count', participantCount);
+    });
+
+    socket.on('admin-next-question', ({ code, questionIndex }) => {
+        io.to(code).emit('show-question', { questionIndex });
+    });
+    
+    socket.on('admin-pause', ({ code }) => {
+        io.to(code).emit('quiz-paused');
+    });
+    
+    socket.on('admin-resume', ({ code }) => {
+        io.to(code).emit('quiz-resumed');
+    });
+    
+    socket.on('admin-show-answer', ({ code, correctVariantId }) => {
+        io.to(code).emit('show-correct-answer', { correctVariantId });
     });
 
     socket.on('startQuiz', async (code) => {
@@ -35,6 +55,12 @@ io.on('connection', (socket) => {
     });
     
     socket.on('submitAnswer', (data) => {
+    });
+    
+    socket.on('get-participants', (code) => {
+        const room = io.sockets.adapter.rooms.get(code);
+        const participantCount = room ? room.size : 0;
+        socket.emit('participant-count', participantCount);
     });
 
     socket.on('disconnect', () => {
