@@ -1154,6 +1154,7 @@ function startTimer(timeLimit) {
 }
 
 async function selectVariant(variantId, variantDiv) {
+    console.log('SELECT VARIANT CALLED - ID:', variantId);
     clearInterval(timerInterval);
     
     document.querySelectorAll('.variant-option').forEach(div => {
@@ -1177,6 +1178,7 @@ async function selectVariant(variantId, variantDiv) {
         });
         
         const data = await response.json();
+        console.log('ANSWER RESPONSE:', data);
         
         if (data.isCorrect) {
             score++;
@@ -1185,11 +1187,14 @@ async function selectVariant(variantId, variantDiv) {
             variantDiv.classList.add('incorrect');
         }
         
+        console.log('CALLING NEXT QUESTION IN 2 SECONDS...');
         setTimeout(() => {
+            console.log('TIMEOUT FIRED - CALLING nextQuestion()');
             nextQuestion();
         }, 2000);
     } catch (error) {
         console.error('Error submitting answer:', error);
+        console.log('ERROR - CALLING NEXT QUESTION IN 1 SECOND...');
         setTimeout(() => {
             nextQuestion();
         }, 1000);
@@ -1197,29 +1202,37 @@ async function selectVariant(variantId, variantDiv) {
 }
 
 function skipQuestion() {
+    console.log('SKIP QUESTION CALLED');
     clearInterval(timerInterval);
     
     const controlButtons = document.querySelectorAll('#variantsContainer button');
     controlButtons.forEach(btn => btn.disabled = true);
     
+    console.log('CALLING nextQuestion() IMMEDIATELY');
     nextQuestion();
 }
 
 function finishQuizEarly() {
+    console.log('FINISH QUIZ EARLY CALLED');
     clearInterval(timerInterval);
     
     const controlButtons = document.querySelectorAll('#variantsContainer button');
     controlButtons.forEach(btn => btn.disabled = true);
     
+    console.log('CALLING finishQuiz()');
     finishQuiz();
 }
 
 function nextQuestion() {
+    console.log('NEXT QUESTION CALLED - Current index:', currentQuestionIndex);
     currentQuestionIndex++;
+    console.log('NEW index:', currentQuestionIndex, 'Total:', currentQuestions.length);
     
     if (currentQuestionIndex >= currentQuestions.length) {
+        console.log('NO MORE QUESTIONS - FINISHING QUIZ');
         finishQuiz();
     } else {
+        console.log('SHOWING NEXT QUESTION');
         showQuestion();
     }
 }
