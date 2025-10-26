@@ -849,9 +849,6 @@ function showQuestion() {
         return;
     }
     
-    console.log('Current question:', question);
-    console.log('Media URL:', question.media_url);
-    
     document.getElementById('questionText').textContent = question.question_text;
     
     const mediaContainer = document.getElementById('questionMedia').parentElement;
@@ -862,10 +859,8 @@ function showQuestion() {
         let mediaUrls = [];
         try {
             mediaUrls = JSON.parse(question.media_url);
-            console.log('Parsed media URLs:', mediaUrls);
         } catch (e) {
             mediaUrls = [question.media_url];
-            console.log('Single media URL:', mediaUrls);
         }
         
         if (!Array.isArray(mediaUrls)) {
@@ -873,22 +868,17 @@ function showQuestion() {
         }
         
         mediaUrls.forEach((url, index) => {
-            console.log(`Processing media ${index}:`, url);
-            
             if (!url || url === 'null' || url === null || url.trim() === '') {
-                console.log('Skipping empty URL');
                 return;
             }
             
             url = url.trim();
             
-            // Check if URL is a video by extension or pattern
             const urlLower = url.toLowerCase();
             
-            // Get file extension from URL (handle query parameters)
             let fileExtension = '';
             try {
-                const urlPath = url.split('?')[0]; // Remove query params
+                const urlPath = url.split('?')[0];
                 const parts = urlPath.split('.');
                 if (parts.length > 1) {
                     fileExtension = parts[parts.length - 1].toLowerCase();
@@ -897,17 +887,13 @@ function showQuestion() {
                 console.error('Error parsing URL:', e);
             }
             
-            console.log('File extension:', fileExtension);
-            
             const videoExtensions = ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv', 'flv', 'm4v', 'wmv'];
             const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg', 'ico'];
             
-            // Check for video patterns
             const isYouTube = urlLower.includes('youtube.com') || urlLower.includes('youtu.be');
             const isVimeo = urlLower.includes('vimeo.com');
             const hasVideoInPath = urlLower.includes('/video/') || urlLower.includes('/videos/');
             
-            // Determine if it's a video or image
             const isVideoExtension = videoExtensions.includes(fileExtension);
             const isImageExtension = imageExtensions.includes(fileExtension);
             const isImageKitUrl = url.includes('ik.imagekit.io');
@@ -920,7 +906,6 @@ function showQuestion() {
             } else if (isImageExtension) {
                 isImage = true;
             } else if (isImageKitUrl) {
-                // For ImageKit URLs, check the file name in the URL
                 const urlParts = url.split('/');
                 const fileName = urlParts[urlParts.length - 1].split('?')[0].toLowerCase();
                 if (videoExtensions.some(ext => fileName.endsWith('.' + ext))) {
@@ -928,23 +913,16 @@ function showQuestion() {
                 } else if (imageExtensions.some(ext => fileName.endsWith('.' + ext))) {
                     isImage = true;
                 } else {
-                    // Default to image for ImageKit
                     isImage = true;
                 }
             } else if (isYouTube || isVimeo || hasVideoInPath) {
                 isVideo = true;
             } else {
-                // Default to image if unknown
                 isImage = true;
             }
             
-            console.log(`Media type determined: Video=${isVideo}, Image=${isImage}, Extension=${fileExtension}`);
-            
             if (isVideo) {
-                console.log('Creating VIDEO element for:', url);
-                
                 if (isYouTube) {
-                    console.log('Detected YouTube URL');
                     let videoId = '';
                     if (url.includes('youtube.com/watch?v=')) {
                         videoId = url.split('v=')[1].split('&')[0];
@@ -955,7 +933,6 @@ function showQuestion() {
                     }
                     
                     if (videoId) {
-                        console.log('YouTube video ID:', videoId);
                         const iframe = document.createElement('iframe');
                         iframe.src = `https://www.youtube.com/embed/${videoId}`;
                         iframe.width = '600';
@@ -969,7 +946,6 @@ function showQuestion() {
                         console.error('Could not extract YouTube video ID from:', url);
                     }
                 } else if (isVimeo) {
-                    console.log('Detected Vimeo URL');
                     let videoId = '';
                     if (url.includes('vimeo.com/')) {
                         videoId = url.split('vimeo.com/')[1].split('/')[0].split('?')[0];
@@ -1178,11 +1154,6 @@ function startTimer(timeLimit) {
 }
 
 async function selectVariant(variantId, variantDiv) {
-    console.log('=== VARIANT SELECTED ===');
-    console.log('Variant ID:', variantId);
-    console.log('Current question index:', currentQuestionIndex);
-    console.log('Total questions:', currentQuestions.length);
-    
     clearInterval(timerInterval);
     
     document.querySelectorAll('.variant-option').forEach(div => {
@@ -1206,19 +1177,15 @@ async function selectVariant(variantId, variantDiv) {
         });
         
         const data = await response.json();
-        console.log('Answer submitted, response:', data);
         
         if (data.isCorrect) {
             score++;
             variantDiv.classList.add('correct');
-            console.log('Answer CORRECT! New score:', score);
         } else {
             variantDiv.classList.add('incorrect');
-            console.log('Answer INCORRECT');
         }
         
         setTimeout(() => {
-            console.log('Moving to next question...');
             nextQuestion();
         }, 2000);
     } catch (error) {
@@ -1230,8 +1197,6 @@ async function selectVariant(variantId, variantDiv) {
 }
 
 function skipQuestion() {
-    console.log('=== SKIPPING QUESTION ===');
-    console.log('Skipped question index:', currentQuestionIndex);
     clearInterval(timerInterval);
     
     const controlButtons = document.querySelectorAll('#variantsContainer button');
@@ -1241,8 +1206,6 @@ function skipQuestion() {
 }
 
 function finishQuizEarly() {
-    console.log('=== FINISHING QUIZ EARLY ===');
-    console.log('Finished at question:', currentQuestionIndex + 1, 'of', currentQuestions.length);
     clearInterval(timerInterval);
     
     const controlButtons = document.querySelectorAll('#variantsContainer button');
@@ -1252,17 +1215,11 @@ function finishQuizEarly() {
 }
 
 function nextQuestion() {
-    console.log('=== NEXT QUESTION ===');
-    console.log('Moving from question', currentQuestionIndex + 1, 'to', currentQuestionIndex + 2);
-    console.log('Total questions:', currentQuestions.length);
-    
     currentQuestionIndex++;
     
     if (currentQuestionIndex >= currentQuestions.length) {
-        console.log('No more questions, finishing quiz...');
         finishQuiz();
     } else {
-        console.log('Showing next question...');
         showQuestion();
     }
 }
