@@ -17,7 +17,7 @@ async function uploadFile(file, fileName, mimeType) {
             useUniqueFileName: true
         };
         
-        // Add tags based on file type
+        
         if (mimeType) {
             if (mimeType.startsWith('video/')) {
                 uploadOptions.tags = ['video', 'quiz'];

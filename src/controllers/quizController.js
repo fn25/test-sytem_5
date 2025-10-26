@@ -15,11 +15,24 @@ const createQuiz = async (req, res) => {
     const code = nanoid();
 
     try {
-        const newQuizResult = await pool.query(
-            'INSERT INTO quizzes (title, code, creator_id, mode) VALUES ($1, $2, $3, $4) RETURNING id',
-            [title, code, creator_id, quizMode]
-        );
-        const quizId = newQuizResult.rows[0].id;
+        let quizId;
+        
+        // Try to insert with mode column
+        try {
+            const newQuizResult = await pool.query(
+                'INSERT INTO quizzes (title, code, creator_id, mode) VALUES ($1, $2, $3, $4) RETURNING id',
+                [title, code, creator_id, quizMode]
+            );
+            quizId = newQuizResult.rows[0].id;
+        } catch (modeError) {
+            // If mode column doesn't exist, insert without it
+            console.log('Mode column not found, inserting without mode:', modeError.message);
+            const newQuizResult = await pool.query(
+                'INSERT INTO quizzes (title, code, creator_id) VALUES ($1, $2, $3) RETURNING id',
+                [title, code, creator_id]
+            );
+            quizId = newQuizResult.rows[0].id;
+        }
 
         for (const q of questions) {
             const { question_text, media_url, time_limit, variants } = q;
