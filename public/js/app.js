@@ -1305,12 +1305,15 @@ async function openPresentation(quizId, quizTitle, quizCode) {
         const qrcodeDiv = document.getElementById('qrcodeCanvas');
         qrcodeDiv.innerHTML = '';
         
-        const joinUrl = `${window.location.origin}/?code=${quizCode}`;
+        const baseUrl = window.location.origin;
+        const joinUrl = `${baseUrl}/?code=${quizCode}`;
+        console.log('QR Code URL:', joinUrl);
+        
         new QRCode(qrcodeDiv, {
             text: joinUrl,
             width: 256,
             height: 256,
-            colorDark: "#667eea",
+            colorDark: "#000000",
             colorLight: "#ffffff",
             correctLevel: QRCode.CorrectLevel.H
         });

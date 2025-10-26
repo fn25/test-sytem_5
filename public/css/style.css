@@ -190,6 +190,19 @@ input:focus {
     background: #f8d7da;
 }
 
+.variant-letter {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    font-weight: bold;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
 #timer {
     font-size: 1.5em;
     color: #667eea;
@@ -387,4 +400,153 @@ h2 {
 h3 {
     color: #764ba2;
     margin: 20px 0;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .container {
+        border-radius: 10px;
+    }
+
+    header {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 1.5em;
+    }
+
+    main {
+        padding: 20px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.1em;
+    }
+
+    #variantsContainer {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .variant-option {
+        padding: 15px;
+        font-size: 1em;
+    }
+
+    .variant-letter {
+        font-size: 1.2em;
+    }
+
+    .quiz-card {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .quiz-card .quiz-code {
+        font-size: 1.2em;
+    }
+
+    form {
+        max-width: 100%;
+    }
+
+    .question-block {
+        padding: 15px;
+    }
+
+    .variants-container input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .variant-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    #questionMediaContainer img,
+    #questionMediaContainer video,
+    #questionMediaContainer iframe {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    #timer {
+        font-size: 1.2em;
+    }
+
+    #finalScore {
+        font-size: 2em;
+    }
+
+    .media-input-group {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #presentationModal .qr-section {
+        flex-direction: column;
+    }
+
+    #qrcode {
+        margin: 0 auto;
+    }
+
+    .participants-list {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .admin-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .admin-controls button {
+        width: 100%;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    header h1 {
+        font-size: 1.2em;
+    }
+
+    .variant-option {
+        padding: 12px;
+        font-size: 0.95em;
+    }
+
+    .quiz-card h3 {
+        font-size: 1em;
+    }
+
+    button {
+        padding: 12px;
+        font-size: 1em;
+    }
+
+    #finalScore {
+        font-size: 1.5em;
+    }
+
+    .participants-list {
+        grid-template-columns: 1fr !important;
+    }
 }
