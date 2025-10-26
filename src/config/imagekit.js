@@ -17,7 +17,6 @@ async function uploadFile(file, fileName, mimeType) {
             useUniqueFileName: true
         };
         
-        
         if (mimeType) {
             if (mimeType.startsWith('video/')) {
                 uploadOptions.tags = ['video', 'quiz'];
@@ -26,17 +25,7 @@ async function uploadFile(file, fileName, mimeType) {
             }
         }
         
-        console.log('ImageKit upload options:', uploadOptions);
-        
         const result = await imagekit.upload(uploadOptions);
-        
-        console.log('ImageKit upload result:', {
-            fileId: result.fileId,
-            name: result.name,
-            url: result.url,
-            fileType: result.fileType,
-            filePath: result.filePath
-        });
         
         return result;
     } catch (error) {

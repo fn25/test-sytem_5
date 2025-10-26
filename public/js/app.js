@@ -10,8 +10,6 @@ let score = 0;
 let timerInterval = null;
 const socket = io();
 
-console.log('App loaded. Token:', token ? 'exists' : 'none');
-
 function hideAllSections() {
     document.querySelectorAll('main > div').forEach(section => {
         section.style.display = 'none';
@@ -255,7 +253,6 @@ function toggleMediaInput(radio) {
             fileInput.onchange = function(e) {
                 const file = e.target.files[0];
                 if (file) {
-                    console.log('File selected:', file.name, file.type, file.size);
                     const reader = new FileReader();
                     reader.onload = function(event) {
                         const fileType = file.type.split('/')[0];
@@ -374,25 +371,17 @@ function addVariant(button) {
 async function createQuiz(event) {
     event.preventDefault();
     
-    // Prevent multiple submissions
     const submitBtn = event.target.querySelector('button[type="submit"]');
     if (submitBtn.disabled) {
-        console.log('Quiz creation already in progress, ignoring...');
         return;
     }
     
     submitBtn.disabled = true;
     submitBtn.textContent = 'Creating...';
     
-    console.log('=== CREATE QUIZ STARTED ===');
-    
     const title = document.getElementById('quizTitle').value;
     const mode = document.getElementById('quizMode').value;
     const questionBlocks = document.querySelectorAll('.question-block');
-    
-    console.log('Quiz title:', title);
-    console.log('Quiz mode:', mode);
-    console.log('Number of questions:', questionBlocks.length);
     
     const questions = [];
     
@@ -400,57 +389,41 @@ async function createQuiz(event) {
         const questionText = block.querySelector('.questionText').value;
         const timeLimit = block.querySelector('.timeLimit').value;
         
-        console.log('Processing question:', questionText);
-        
         const mediaSection = block.querySelector('.media-upload-section');
         const mediaType = mediaSection.querySelector('input[type="radio"]:checked').value;
         const mediaUrls = [];
         
-        console.log('Processing question media, type:', mediaType);
-        
         if (mediaType === 'url') {
             const urlInputs = block.querySelectorAll('.mediaUrl');
-            console.log('Found URL inputs:', urlInputs.length);
             urlInputs.forEach((input, idx) => {
                 if (input.value && input.style.display !== 'none') {
-                    console.log(`Adding URL ${idx}:`, input.value);
                     mediaUrls.push(input.value);
                 }
             });
         } else {
             const fileInputs = block.querySelectorAll('.mediaFile');
-            console.log('Found file inputs:', fileInputs.length);
             
             for (let i = 0; i < fileInputs.length; i++) {
                 const fileInput = fileInputs[i];
-                console.log(`Checking file input ${i}:`, {
-                    hasFiles: fileInput.files.length > 0,
-                    display: fileInput.style.display
-                });
                 
                 if (fileInput.files.length > 0 && fileInput.style.display !== 'none') {
                     const file = fileInput.files[0];
-                    console.log(`Uploading file ${i}:`, file.name, 'Type:', file.type, 'Size:', file.size);
                     
                     try {
                         const uploadedUrl = await uploadFile(file);
-                        console.log('File uploaded successfully:', uploadedUrl);
                         mediaUrls.push(uploadedUrl);
                     } catch (error) {
                         console.error('File upload error:', error);
-                        console.log('=== CREATE QUIZ FAILED (upload error) ===');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Create Quiz';
                         return;
                     }
                 }
             }
         }
         
-        console.log('Total media URLs for this question:', mediaUrls.length, mediaUrls);
-        
         const variantTexts = block.querySelectorAll('.variantText');
         const isCorrects = block.querySelectorAll('.isCorrect');
-        
-        console.log('Variants count:', variantTexts.length);
         
         const variants = [];
         variantTexts.forEach((variantText, index) => {
@@ -466,15 +439,9 @@ async function createQuiz(event) {
             time_limit: parseInt(timeLimit),
             variants
         });
-        
-        console.log('Question added to array');
     }
     
-    console.log('=== All questions processed, total:', questions.length);
-    console.log('Questions data:', JSON.stringify(questions, null, 2));
-    
     try {
-        console.log('Sending request to create quiz...');
         const response = await fetch(`${API_URL}/quizzes`, {
             method: 'POST',
             headers: {
@@ -484,32 +451,24 @@ async function createQuiz(event) {
             body: JSON.stringify({ title, mode, questions })
         });
         
-        console.log('Response status:', response.status);
         const data = await response.json();
-        console.log('Response data:', data);
         
         if (response.ok) {
-            console.log('=== CREATE QUIZ SUCCESS ===');
-            
-            // Reset form and button
             document.getElementById('createQuizForm').reset();
             document.getElementById('questionsContainer').innerHTML = '';
             addQuestion();
             submitBtn.disabled = false;
             submitBtn.textContent = 'Create Quiz';
             
-            // Show success message and redirect to My Quizzes
             alert('✅ Test muvaffaqiyatli yaratildi!');
             showMyQuizzes();
         } else {
             console.error('Failed to create quiz:', data.message);
-            console.log('=== CREATE QUIZ FAILED (server error) ===');
             submitBtn.disabled = false;
             submitBtn.textContent = 'Create Quiz';
         }
     } catch (error) {
         console.error('Error:', error);
-        console.log('=== CREATE QUIZ FAILED (network error) ===');
         submitBtn.disabled = false;
         submitBtn.textContent = 'Create Quiz';
     }
@@ -518,8 +477,6 @@ async function createQuiz(event) {
 async function uploadFile(file) {
     const formData = new FormData();
     formData.append('file', file);
-    
-    console.log('Starting file upload:', file.name, file.type);
     
     try {
         const response = await fetch(`${API_URL}/quizzes/upload`, {
@@ -530,10 +487,7 @@ async function uploadFile(file) {
             body: formData
         });
         
-        console.log('Upload response status:', response.status);
-        
         const data = await response.json();
-        console.log('Upload response data:', data);
         
         if (response.ok && data.url) {
             return data.url;
@@ -801,7 +755,7 @@ async function updateQuiz(quizId) {
 }
 
 async function editQuiz_OLD(quizId) {
-    console.log('Edit functionality coming soon!');
+    alert('Edit functionality coming soon!');
 }
 
 async function joinQuiz(event) {

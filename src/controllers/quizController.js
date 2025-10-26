@@ -17,7 +17,6 @@ const createQuiz = async (req, res) => {
     try {
         let quizId;
         
-        // Try to insert with mode column
         try {
             const newQuizResult = await pool.query(
                 'INSERT INTO quizzes (title, code, creator_id, mode) VALUES ($1, $2, $3, $4) RETURNING id',
@@ -25,7 +24,6 @@ const createQuiz = async (req, res) => {
             );
             quizId = newQuizResult.rows[0].id;
         } catch (modeError) {
-            // If mode column doesn't exist, insert without it
             console.log('Mode column not found, inserting without mode:', modeError.message);
             const newQuizResult = await pool.query(
                 'INSERT INTO quizzes (title, code, creator_id) VALUES ($1, $2, $3) RETURNING id',
@@ -66,20 +64,10 @@ const uploadImage = async (req, res) => {
     }
 
     try {
-        console.log('Uploading file:', {
-            originalname: req.file.originalname,
-            mimetype: req.file.mimetype,
-            size: req.file.size
-        });
-        
         const fileName = `${Date.now()}_${req.file.originalname}`;
         const fileBuffer = req.file.buffer.toString('base64');
         
-        console.log('File buffer length:', fileBuffer.length);
-        
         const response = await uploadFile(fileBuffer, fileName, req.file.mimetype);
-        
-        console.log('ImageKit response:', response);
         
         res.json({ 
             url: response.url,

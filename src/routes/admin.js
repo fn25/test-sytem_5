@@ -4,8 +4,6 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('../config/db');
 
-// POST /api/admin/init
-// Secured by ADMIN_INIT_TOKEN (set as env var)
 router.post('/init', async (req, res) => {
   const provided = req.headers['x-admin-token'] || req.body?.token;
   if (!process.env.ADMIN_INIT_TOKEN || provided !== process.env.ADMIN_INIT_TOKEN) {
@@ -23,8 +21,6 @@ router.post('/init', async (req, res) => {
   }
 });
 
-// POST /api/admin/migrate
-// Run migration to add quiz modes
 router.post('/migrate', async (req, res) => {
   const provided = req.headers['x-admin-token'] || req.body?.token;
   if (!process.env.ADMIN_INIT_TOKEN || provided !== process.env.ADMIN_INIT_TOKEN) {
