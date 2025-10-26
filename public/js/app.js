@@ -851,7 +851,12 @@ function showQuestion() {
     
     document.getElementById('questionText').textContent = question.question_text;
     
-    const mediaContainer = document.getElementById('questionMedia').parentElement;
+    const mediaContainer = document.getElementById('questionMediaContainer');
+    if (!mediaContainer) {
+        console.error('questionMediaContainer not found!');
+        return;
+    }
+    
     mediaContainer.innerHTML = '<div id="mediaContainer" style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin: 20px 0;"></div>';
     const newMediaContainer = document.getElementById('mediaContainer');
     
