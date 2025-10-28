@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahoot-like Quiz App</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .error-message {
+            color: red;
+            margin: 10px 0;
+            padding: 10px;
+            background: #ffebee;
+            border-radius: 5px;
+        }
+        .success-message {
+            color: green;
+            margin: 10px 0;
+            padding: 10px;
+            background: #e8f5e9;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Quiz App</h1>
+            <div id="authSection">
+                <button onclick="showRegister()">Register</button>
+                <button onclick="showLogin()">Login</button>
+            </div>
+            <div id="userSection" style="display:none;">
+                <span id="username"></span>
+                <button onclick="logout()">Logout</button>
+            </div>
+        </header>
+
+        <main id="mainContent">
+            <div id="homeSection">
+                <h2>Welcome to Quiz App</h2>
+                <div class="action-buttons">
+                    <button onclick="showJoinQuiz()">Join Quiz</button>
+                    <button onclick="showCreateQuiz()" id="createQuizBtn" style="display:none;">Create Quiz</button>
+                    <button onclick="showMyQuizzes()" id="myQuizzesBtn" style="display:none;">My Quizzes</button>
+                </div>
+            </div>
+
+            <div id="registerSection" style="display:none;">
+                <h2>Register</h2>
+                <form onsubmit="register(event)">
+                    <div class="form-group">
+                        <label for="regUsername">Username</label>
+                        <input type="text" id="regUsername" placeholder="Enter your username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regEmail">Email</label>
+                        <input type="email" id="regEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regPassword">Password</label>
+                        <input type="password" id="regPassword" placeholder="Enter your password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="regRole">Role</label>
+                        <select id="regRole">
+                            <option value="student">Student</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <button type="submit">Register</button>
+                    <button type="button" onclick="showHome()">Cancel</button>
+                </form>
+            </div>
+
+            <div id="loginSection" style="display:none;">
+                <h2>Login</h2>
+                <form onsubmit="login(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                    </div>
+                    <button type="submit">Login</button>
+                    <button type="button" onclick="showHome()">Cancel</button>
+                </form>
+            </div>
+
+            <div id="joinQuizSection" style="display:none;">
+                <h2>Join Quiz</h2>
+                <form onsubmit="joinQuiz(event)">
+                    <div class="form-group">
+                        <label for="quizCode">Quiz Code</label>
+                        <input type="text" id="quizCode" placeholder="Enter 6-digit quiz code" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="guestUsername">Your Name</label>
+                        <input type="text" id="guestUsername" placeholder="Enter your name" required>
+                    </div>
+                    <button type="submit">Join</button>
+                    <button type="button" onclick="showHome()">Cancel</button>
+                </form>
+            </div>
+
+            <div id="createQuizSection" style="display:none;">
+                <h2>Create Quiz</h2>
+                <form id="createQuizForm" onsubmit="createQuiz(event)">
+                    <div class="form-group">
+                        <label for="quizTitle">Quiz Title</label>
+                        <input type="text" id="quizTitle" placeholder="Enter quiz title" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quizMode">Quiz Mode</label>
+                        <select id="quizMode" required>
+                            <option value="synchronized">Synchronized (Admin controls, everyone sees same question)</option>
+                            <option value="self_paced_immediate" selected>Self-Paced (Show answers immediately)</option>
+                            <option value="self_paced_end">Self-Paced (Show answers at end)</option>
+                        </select>
+                    </div>
+                    
+                    <div id="questionsContainer">
+                        <div class="question-block">
+                            <h3>Question 1</h3>
+                            <div class="form-group">
+                                <label>Question Text</label>
+                                <input type="text" class="questionText" placeholder="Enter your question" required>
+                            </div>
+                            
+                            <div class="media-upload-section">
+                                <label>Add Images/Videos:</label>
+                                <div>
+                                    <input type="radio" name="media-type-0" value="url" checked onchange="toggleMediaInput(this)"> URL
+                                    <input type="radio" name="media-type-0" value="file" onchange="toggleMediaInput(this)"> Upload File
+                                </div>
+                                <div class="media-inputs-container">
+                                    <div class="media-input-group">
+                                        <input type="text" class="mediaUrl" placeholder="Enter image/video URL" style="display:block;">
+                                        <input type="file" class="mediaFile" accept="image/*,video/*" style="display:none;">
+                                    </div>
+                                </div>
+                                <button type="button" class="add-media-btn" onclick="addMediaInput(this)">+ Add Another Media</button>
+                                <div class="media-preview"></div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Time Limit (seconds)</label>
+                                <input type="number" class="timeLimit" placeholder="30" value="30" required>
+                            </div>
+                            
+                            <label>Answer Variants:</label>
+                            <div class="variants-container">
+                                <div class="variant-row">
+                                    <input type="text" class="variantText" placeholder="Variant 1" required>
+                                    <input type="checkbox" class="isCorrect" id="var-0-1">
+                                    <label for="var-0-1">Correct</label>
+                                </div>
+                                <div class="variant-row">
+                                    <input type="text" class="variantText" placeholder="Variant 2" required>
+                                    <input type="checkbox" class="isCorrect" id="var-0-2">
+                                    <label for="var-0-2">Correct</label>
+                                </div>
+                            </div>
+                            <button type="button" onclick="addVariant(this)">Add Variant</button>
+                        </div>
+                    </div>
+                    <button type="button" onclick="addQuestion()">Add Question</button>
+                    <button type="submit">Create Quiz</button>
+                    <button type="button" onclick="showHome()">Cancel</button>
+                </form>
+            </div>
+
+            <div id="myQuizzesSection" style="display:none;">
+                <h2>My Quizzes</h2>
+                <div id="quizzesList"></div>
+                <button onclick="showHome()">Back</button>
+            </div>
+            
+            <!-- Fullscreen Presentation Mode -->
+            <div id="presentationSection" style="display:none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 40px;">
+                <div style="text-align: center; color: white;">
+                    <button onclick="exitPresentation()" style="position: absolute; top: 20px; right: 20px; padding: 12px 24px; font-size: 18px; background: rgba(255,255,255,0.2); border: 2px solid white; border-radius: 8px; color: white; cursor: pointer; backdrop-filter: blur(10px);">
+                        ✕ Chiqish
+                    </button>
+                    
+                    <h1 id="presentationQuizTitle" style="font-size: 48px; margin-top: 40px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"></h1>
+                    
+                    <div id="presentationQRCode" style="background: white; padding: 30px; border-radius: 20px; display: inline-block; margin: 40px auto; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+                        <div style="font-size: 24px; color: #333; margin-bottom: 20px;">Testga qo'shilish uchun:</div>
+                        <div id="qrcodeCanvas" style="margin: 20px auto;"></div>
+                        <div style="font-size: 48px; font-weight: bold; color: #667eea; letter-spacing: 8px; margin-top: 20px;" id="presentationCode"></div>
+                        <div style="font-size: 18px; color: #666; margin-top: 10px;">Kodni kiriting: <strong id="presentationUrl"></strong></div>
+                    </div>
+                    
+                    <div id="presentationStats" style="margin-top: 40px;">
+                        <div style="font-size: 32px; margin: 20px 0;">
+                            👥 Ishtirokchilar: <span id="participantsCount" style="font-weight: bold; font-size: 48px;">0</span>
+                        </div>
+                        <div style="font-size: 24px; color: rgba(255,255,255,0.9);">
+                            📝 Savollar soni: <span id="questionsCount"></span>
+                        </div>
+                        <div id="participantsList" style="margin-top: 30px; max-height: 300px; overflow-y: auto; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px;">
+                            <h3 style="margin-top: 0;">Qo'shilganlar:</h3>
+                            <div id="participantsNames" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; font-size: 18px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="adminControls" style="margin-top: 40px; display: none;">
+                        <button onclick="startSyncQuiz()" style="padding: 15px 40px; font-size: 20px; background: #4CAF50; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px;">
+                            ▶️ Testni Boshlash
+                        </button>
+                        <button onclick="pauseSyncQuiz()" id="pauseBtn" style="padding: 15px 40px; font-size: 20px; background: #FF9800; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ⏸️ Pauza
+                        </button>
+                        <button onclick="resumeSyncQuiz()" id="resumeBtn" style="padding: 15px 40px; font-size: 20px; background: #4CAF50; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ▶️ Davom ettirish
+                        </button>
+                        <button onclick="nextSyncQuestion()" id="nextBtn" style="padding: 15px 40px; font-size: 20px; background: #2196F3; border: none; border-radius: 8px; color: white; cursor: pointer; margin: 10px; display: none;">
+                            ⏭️ Keyingi savol
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="quizPlaySection" style="display:none;">
+                <h2 id="quizPlayTitle"></h2>
+                <div id="questionContainer">
+                    <h3 id="questionText"></h3>
+                    <div id="questionMediaContainer">
+                        <img id="questionMedia" style="display:none; max-width: 100%; max-height: 400px; border-radius: 10px; margin: 20px auto; display: block;">
+                        <video id="questionVideo" controls style="display:none; max-width: 100%; max-height: 400px; border-radius: 10px; margin: 20px auto; display: block;"></video>
+                    </div>
+                    <div id="timer">Time: <span id="timeLeft">30</span>s</div>
+                    <div id="variantsContainer"></div>
+                </div>
+                <div id="resultsContainer" style="display:none;">
+                    <h3>Quiz Completed!</h3>
+                    <p>Your Score: <span id="finalScore"></span></p>
+                    <h4>Leaderboard</h4>
+                    <div id="leaderboardContainer"></div>
+                    <button onclick="showHome()">Home</button>
+                </div>
+            </div>
+
+            <div id="resultsSection" style="display:none;">
+                <h2>Quiz Results</h2>
+                <div id="leaderboard"></div>
+                <button onclick="showMyQuizzes()">Back to My Quizzes</button>
+            </div>
+        </main>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Test</title>
+</head>
+<body>
+    <h1>API Testing Console</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            results.appendChild(p);
+        }
+        
+        async function testRegister() {
+            try {
+                const response = await fetch(`${API_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: 'TestAdmin',
+                        email: 'admin@test.com',
+                        password: 'admin123',
+                        role: 'admin'
+                    })
+                });
+                const data = await response.json();
+                log('Register: ' + JSON.stringify(data));
+            } catch (error) {
+                log('Register Error: ' + error.message);
+            }
+        }
+        
+        async function testLogin() {
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'admin@test.com',
+                        password: 'admin123'
+                    })
+                });
+                const data = await response.json();
+                log('Login: ' + JSON.stringify(data));
+                if (data.token) {
+                    localStorage.setItem('testToken', data.token);
+                }
+            } catch (error) {
+                log('Login Error: ' + error.message);
+            }
+        }
+        
+        async function testCreateQuiz() {
+            try {
+                const token = localStorage.getItem('testToken');
+                const response = await fetch(`${API_URL}/quizzes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-auth-token': token
+                    },
+                    body: JSON.stringify({
+                        title: 'Test Quiz',
+                        questions: [
+                            {
+                                question_text: 'What is 2+2?',
+                                media_url: null,
+                                time_limit: 30,
+                                variants: [
+                                    { variant_text: '3', is_correct: false },
+                                    { variant_text: '4', is_correct: true },
+                                    { variant_text: '5', is_correct: false }
+                                ]
+                            }
+                        ]
+                    })
+                });
+                const data = await response.json();
+                log('Create Quiz: ' + JSON.stringify(data));
+            } catch (error) {
+                log('Create Quiz Error: ' + error.message);
+            }
+        }
+        
+        log('Starting tests...');
+        setTimeout(async () => {
+            await testRegister();
+            setTimeout(async () => {
+                await testLogin();
+                setTimeout(testCreateQuiz, 1000);
+            }, 1000);
+        }, 1000);
+    </script>
+</body>
+</html>
