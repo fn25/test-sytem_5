@@ -96,6 +96,23 @@ const translations = {
     error_occurred: "Xatolik yuz berdi",
     loading: "Yuklanmoqda...",
     no_quizzes: "Hozircha testlar yo'q",
+    
+    // Additional buttons and actions
+    big_screen: "Katta ekran",
+    stop_live: "To'xtatish",
+    view_results: "Natijalarni Ko'rish",
+    edit: "Tahrirlash",
+    go_live: "Jonli efirga chiqarish",
+    leaderboard: "Natijalar Jadvali",
+    score: "Ball",
+    rank: "O'rin",
+    correct_answer: "To'g'ri javob",
+    your_answer: "Sizning javobingiz",
+    time_up: "Vaqt tugadi!",
+    waiting: "Kutilmoqda...",
+    question_number: "Savol",
+    variant: "Variant",
+    add_media: "Yana Media Qo'shish",
   },
 
   ru: {
@@ -194,6 +211,23 @@ const translations = {
     error_occurred: "Произошла ошибка",
     loading: "Загрузка...",
     no_quizzes: "Пока нет тестов",
+    
+    // Additional buttons and actions
+    big_screen: "Большой экран",
+    stop_live: "Остановить",
+    view_results: "Просмотр Результатов",
+    edit: "Редактировать",
+    go_live: "В эфир",
+    leaderboard: "Таблица Лидеров",
+    score: "Баллы",
+    rank: "Место",
+    correct_answer: "Правильный ответ",
+    your_answer: "Ваш ответ",
+    time_up: "Время истекло!",
+    waiting: "Ожидание...",
+    question_number: "Вопрос",
+    variant: "Вариант",
+    add_media: "Добавить Еще Медиа",
   },
 
   en: {
@@ -292,6 +326,23 @@ const translations = {
     error_occurred: "An error occurred",
     loading: "Loading...",
     no_quizzes: "No quizzes yet",
+    
+    // Additional buttons and actions
+    big_screen: "Big Screen",
+    stop_live: "Stop Live",
+    view_results: "View Results",
+    edit: "Edit",
+    go_live: "Go Live",
+    leaderboard: "Leaderboard",
+    score: "Score",
+    rank: "Rank",
+    correct_answer: "Correct Answer",
+    your_answer: "Your Answer",
+    time_up: "Time's up!",
+    waiting: "Waiting...",
+    question_number: "Question",
+    variant: "Variant",
+    add_media: "Add Another Media",
   },
 };
 

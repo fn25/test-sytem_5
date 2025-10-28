@@ -64,26 +64,26 @@ async function showMyQuizzes() {
       let actionButtons = "";
       if (quiz.status === "pending" || quiz.status === "finished") {
         actionButtons = `
-                    <button onclick="makeQuizLive(${quiz.id})">Go Live</button>
-                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 Katta ekran</button>
-                    <button onclick="editQuiz(${quiz.id})">Edit</button>
-                    <button onclick="viewLeaderboard(${quiz.id})">View Results</button>
+                    <button onclick="makeQuizLive(${quiz.id})">${t('start_quiz')}</button>
+                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 ${t('big_screen')}</button>
+                    <button onclick="editQuiz(${quiz.id})">${t('edit')}</button>
+                    <button onclick="viewLeaderboard(${quiz.id})">${t('view_results')}</button>
                 `;
       } else if (quiz.status === "live") {
         actionButtons = `
-                    <button onclick="stopQuizLive(${quiz.id})" style="background: #f44336;">Stop Live</button>
-                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 Katta ekran</button>
-                    <button onclick="viewLeaderboard(${quiz.id})">View Results</button>
+                    <button onclick="stopQuizLive(${quiz.id})" style="background: #f44336;">${t('stop_live')}</button>
+                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 ${t('big_screen')}</button>
+                    <button onclick="viewLeaderboard(${quiz.id})">${t('view_results')}</button>
                 `;
       }
 
       quizCard.innerHTML = `
                 <div>
                     <h3>${quiz.title}</h3>
-                    <p>Code: <span class="quiz-code">${quiz.code}</span></p>
+                    <p>${t('code')}: <span class="quiz-code">${quiz.code}</span></p>
                 </div>
                 <div>
-                    <span class="status ${quiz.status}">${quiz.status}</span>
+                    <span class="status ${quiz.status}">${t(quiz.status)}</span>
                     ${actionButtons}
                 </div>
             `;
@@ -183,21 +183,21 @@ function addQuestion() {
   const questionBlock = document.createElement("div");
   questionBlock.className = "question-block";
   questionBlock.innerHTML = `
-        <h3>Question ${questionNum}</h3>
+        <h3>${t('question')} ${questionNum}</h3>
         <div class="form-group">
-            <label>Question Text</label>
-            <input type="text" class="questionText" placeholder="Enter your question" required>
+            <label>${t('question_text')}</label>
+            <input type="text" class="questionText" placeholder="${t('enter_question')}" required>
         </div>
         
         <div class="media-upload-section">
-            <label>Add Images/Videos:</label>
+            <label>${t('add_images_videos')}</label>
             <div>
                 <input type="radio" name="media-type-${
                   questionNum - 1
-                }" value="url" checked onchange="toggleMediaInput(this)"> URL
+                }" value="url" checked onchange="toggleMediaInput(this)"> ${t('url')}
                 <input type="radio" name="media-type-${
                   questionNum - 1
-                }" value="file" onchange="toggleMediaInput(this)"> Upload File
+                }" value="file" onchange="toggleMediaInput(this)"> ${t('upload')}
             </div>
             <div class="media-inputs-container">
                 <div class="media-input-group">
@@ -205,33 +205,33 @@ function addQuestion() {
                     <input type="file" class="mediaFile" accept="image/*,video/*" style="display:none;">
                 </div>
             </div>
-            <button type="button" class="add-media-btn" onclick="addMediaInput(this)">+ Add Another Media</button>
+            <button type="button" class="add-media-btn" onclick="addMediaInput(this)">+ ${t('add_media')}</button>
             <div class="media-preview"></div>
         </div>
         
         <div class="form-group">
-            <label>Time Limit (seconds)</label>
+            <label>${t('time_limit')}</label>
             <input type="number" class="timeLimit" placeholder="30" value="30" required>
         </div>
         
-        <label>Answer Variants:</label>
+        <label>${t('variants')}:</label>
         <div class="variants-container">
             <div class="variant-row">
-                <input type="text" class="variantText" placeholder="Variant 1" required>
+                <input type="text" class="variantText" placeholder="${t('variant')} 1" required>
                 <input type="checkbox" class="isCorrect" id="var-${
                   questionNum - 1
                 }-1">
-                <label for="var-${questionNum - 1}-1">Correct</label>
+                <label for="var-${questionNum - 1}-1">${t('correct')}</label>
             </div>
             <div class="variant-row">
-                <input type="text" class="variantText" placeholder="Variant 2" required>
+                <input type="text" class="variantText" placeholder="${t('variant')} 2" required>
                 <input type="checkbox" class="isCorrect" id="var-${
                   questionNum - 1
                 }-2">
-                <label for="var-${questionNum - 1}-2">Correct</label>
+                <label for="var-${questionNum - 1}-2">${t('correct')}</label>
             </div>
         </div>
-        <button type="button" onclick="addVariant(this)">Add Variant</button>
+        <button type="button" onclick="addVariant(this)">${t('add_variant')}</button>
     `;
 
   container.appendChild(questionBlock);
@@ -366,7 +366,7 @@ function addVariant(button) {
   const input = document.createElement("input");
   input.type = "text";
   input.className = "variantText";
-  input.placeholder = `Variant ${variantNum}`;
+  input.placeholder = `${t('variant')} ${variantNum}`;
   input.required = true;
 
   const checkbox = document.createElement("input");
@@ -376,7 +376,7 @@ function addVariant(button) {
 
   const label = document.createElement("label");
   label.setAttribute("for", uniqueId);
-  label.textContent = "Correct";
+  label.textContent = t('correct');
 
   variantRow.appendChild(input);
   variantRow.appendChild(checkbox);
@@ -478,19 +478,19 @@ async function createQuiz(event) {
       document.getElementById("questionsContainer").innerHTML = "";
       addQuestion();
       submitBtn.disabled = false;
-      submitBtn.textContent = t('create');
+      submitBtn.textContent = t("create");
 
-      alert(t('quiz_created'));
+      alert(t("quiz_created"));
       showMyQuizzes();
     } else {
       console.error("Failed to create quiz:", data.message);
       submitBtn.disabled = false;
-      submitBtn.textContent = t('create');
+      submitBtn.textContent = t("create");
     }
   } catch (error) {
     console.error("Error:", error);
     submitBtn.disabled = false;
-    submitBtn.textContent = t('create');
+    submitBtn.textContent = t("create");
   }
 }
 
