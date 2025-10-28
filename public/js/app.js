@@ -64,23 +64,37 @@ async function showMyQuizzes() {
       let actionButtons = "";
       if (quiz.status === "pending" || quiz.status === "finished") {
         actionButtons = `
-                    <button onclick="makeQuizLive(${quiz.id})">${t('start_quiz')}</button>
-                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 ${t('big_screen')}</button>
-                    <button onclick="editQuiz(${quiz.id})">${t('edit')}</button>
-                    <button onclick="viewLeaderboard(${quiz.id})">${t('view_results')}</button>
+                    <button onclick="makeQuizLive(${quiz.id})">${t(
+          "start_quiz"
+        )}</button>
+                    <button onclick="openPresentation(${quiz.id}, '${
+          quiz.title
+        }', '${quiz.code}')">📺 ${t("big_screen")}</button>
+                    <button onclick="editQuiz(${quiz.id})">${t("edit")}</button>
+                    <button onclick="viewLeaderboard(${quiz.id})">${t(
+          "view_results"
+        )}</button>
                 `;
       } else if (quiz.status === "live") {
         actionButtons = `
-                    <button onclick="stopQuizLive(${quiz.id})" style="background: #f44336;">${t('stop_live')}</button>
-                    <button onclick="openPresentation(${quiz.id}, '${quiz.title}', '${quiz.code}')">📺 ${t('big_screen')}</button>
-                    <button onclick="viewLeaderboard(${quiz.id})">${t('view_results')}</button>
+                    <button onclick="stopQuizLive(${
+                      quiz.id
+                    })" style="background: #f44336;">${t("stop_live")}</button>
+                    <button onclick="openPresentation(${quiz.id}, '${
+          quiz.title
+        }', '${quiz.code}')">📺 ${t("big_screen")}</button>
+                    <button onclick="viewLeaderboard(${quiz.id})">${t(
+          "view_results"
+        )}</button>
                 `;
       }
 
       quizCard.innerHTML = `
                 <div>
                     <h3>${quiz.title}</h3>
-                    <p>${t('code')}: <span class="quiz-code">${quiz.code}</span></p>
+                    <p>${t("code")}: <span class="quiz-code">${
+        quiz.code
+      }</span></p>
                 </div>
                 <div>
                     <span class="status ${quiz.status}">${t(quiz.status)}</span>
@@ -183,55 +197,71 @@ function addQuestion() {
   const questionBlock = document.createElement("div");
   questionBlock.className = "question-block";
   questionBlock.innerHTML = `
-        <h3>${t('question')} ${questionNum}</h3>
+        <h3>${t("question")} ${questionNum}</h3>
         <div class="form-group">
-            <label>${t('question_text')}</label>
-            <input type="text" class="questionText" placeholder="${t('enter_question')}" required>
+            <label>${t("question_text")}</label>
+            <input type="text" class="questionText" placeholder="${t(
+              "enter_question"
+            )}" required>
         </div>
         
         <div class="media-upload-section">
-            <label>${t('add_images_videos')}</label>
+            <label>${t("add_images_videos")}</label>
             <div>
                 <input type="radio" name="media-type-${
                   questionNum - 1
-                }" value="url" checked onchange="toggleMediaInput(this)"> ${t('url')}
+                }" value="url" checked onchange="toggleMediaInput(this)"> ${t(
+    "url"
+  )}
                 <input type="radio" name="media-type-${
                   questionNum - 1
-                }" value="file" onchange="toggleMediaInput(this)"> ${t('upload')}
+                }" value="file" onchange="toggleMediaInput(this)"> ${t(
+    "upload"
+  )}
             </div>
             <div class="media-inputs-container">
                 <div class="media-input-group">
-                    <input type="text" class="mediaUrl" placeholder="Enter image/video URL" style="display:block;">
+                    <input type="text" class="mediaUrl" placeholder="${t(
+                      "enter_media_url"
+                    )}" style="display:block;">
                     <input type="file" class="mediaFile" accept="image/*,video/*" style="display:none;">
                 </div>
             </div>
-            <button type="button" class="add-media-btn" onclick="addMediaInput(this)">+ ${t('add_media')}</button>
+            <button type="button" class="add-media-btn" onclick="addMediaInput(this)">+ ${t(
+              "add_media"
+            )}</button>
             <div class="media-preview"></div>
         </div>
         
         <div class="form-group">
-            <label>${t('time_limit')}</label>
+            <label>${t("time_limit")}</label>
             <input type="number" class="timeLimit" placeholder="30" value="30" required>
         </div>
         
-        <label>${t('variants')}:</label>
+        <label>${t("variants")}:</label>
         <div class="variants-container">
             <div class="variant-row">
-                <input type="text" class="variantText" placeholder="${t('variant')} 1" required>
+                <input type="text" class="variantText" placeholder="${t(
+                  "variant"
+                )} 1" required>
                 <input type="checkbox" class="isCorrect" id="var-${
                   questionNum - 1
                 }-1">
-                <label for="var-${questionNum - 1}-1">${t('correct')}</label>
+                <label for="var-${questionNum - 1}-1">${t("correct")}</label>
             </div>
             <div class="variant-row">
-                <input type="text" class="variantText" placeholder="${t('variant')} 2" required>
+                <input type="text" class="variantText" placeholder="${t(
+                  "variant"
+                )} 2" required>
                 <input type="checkbox" class="isCorrect" id="var-${
                   questionNum - 1
                 }-2">
-                <label for="var-${questionNum - 1}-2">${t('correct')}</label>
+                <label for="var-${questionNum - 1}-2">${t("correct")}</label>
             </div>
         </div>
-        <button type="button" onclick="addVariant(this)">${t('add_variant')}</button>
+        <button type="button" onclick="addVariant(this)">${t(
+          "add_variant"
+        )}</button>
     `;
 
   container.appendChild(questionBlock);
@@ -307,15 +337,23 @@ function addMediaInput(button) {
 
   if (currentMediaType === "url") {
     newGroup.innerHTML = `
-            <input type="text" class="mediaUrl" placeholder="Enter image/video URL" style="display:block;">
+            <input type="text" class="mediaUrl" placeholder="${t(
+              "enter_media_url"
+            )}" style="display:block;">
             <input type="file" class="mediaFile" accept="image/*,video/*" style="display:none;">
-            <button type="button" class="remove-media-btn" onclick="removeMediaInput(this)">Remove</button>
+            <button type="button" class="remove-media-btn" onclick="removeMediaInput(this)">${t(
+              "remove"
+            )}</button>
         `;
   } else {
     newGroup.innerHTML = `
-            <input type="text" class="mediaUrl" placeholder="Enter image/video URL" style="display:none;">
+            <input type="text" class="mediaUrl" placeholder="${t(
+              "enter_media_url"
+            )}" style="display:none;">
             <input type="file" class="mediaFile" accept="image/*,video/*" style="display:block;">
-            <button type="button" class="remove-media-btn" onclick="removeMediaInput(this)">Remove</button>
+            <button type="button" class="remove-media-btn" onclick="removeMediaInput(this)">${t(
+              "remove"
+            )}</button>
         `;
 
     const fileInput = newGroup.querySelector(".mediaFile");
@@ -366,7 +404,7 @@ function addVariant(button) {
   const input = document.createElement("input");
   input.type = "text";
   input.className = "variantText";
-  input.placeholder = `${t('variant')} ${variantNum}`;
+  input.placeholder = `${t("variant")} ${variantNum}`;
   input.required = true;
 
   const checkbox = document.createElement("input");
@@ -376,7 +414,7 @@ function addVariant(button) {
 
   const label = document.createElement("label");
   label.setAttribute("for", uniqueId);
-  label.textContent = t('correct');
+  label.textContent = t("correct");
 
   variantRow.appendChild(input);
   variantRow.appendChild(checkbox);

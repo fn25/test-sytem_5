@@ -183,16 +183,16 @@
                             <button type="button" onclick="addVariant(this)">Add Variant</button>
                         </div>
                     </div>
-                    <button type="button" onclick="addQuestion()">Add Question</button>
-                    <button type="submit">Create Quiz</button>
-                    <button type="button" onclick="showHome()">Cancel</button>
+                    <button type="button" onclick="addQuestion()" data-i18n="add_question">Add Question</button>
+                    <button type="submit" data-i18n="create">Create Quiz</button>
+                    <button type="button" onclick="showHome()" data-i18n="cancel">Cancel</button>
                 </form>
             </div>
 
             <div id="myQuizzesSection" style="display:none;">
-                <h2>My Quizzes</h2>
+                <h2 data-i18n="my_quizzes_title">My Quizzes</h2>
                 <div id="quizzesList"></div>
-                <button onclick="showHome()">Back</button>
+                <button onclick="showHome()" data-i18n="back">Back</button>
             </div>
             
             <!-- Fullscreen Presentation Mode -->
@@ -253,18 +253,18 @@
                     <div id="variantsContainer"></div>
                 </div>
                 <div id="resultsContainer" style="display:none;">
-                    <h3>Quiz Completed!</h3>
-                    <p>Your Score: <span id="finalScore"></span></p>
-                    <h4>Leaderboard</h4>
+                    <h3 data-i18n="quiz_completed">Quiz Completed!</h3>
+                    <p><span data-i18n="your_score">Your Score</span>: <span id="finalScore"></span></p>
+                    <h4 data-i18n="leaderboard">Leaderboard</h4>
                     <div id="leaderboardContainer"></div>
-                    <button onclick="showHome()">Home</button>
+                    <button onclick="showHome()" data-i18n="home">Home</button>
                 </div>
             </div>
 
             <div id="resultsSection" style="display:none;">
-                <h2>Quiz Results</h2>
+                <h2 data-i18n="leaderboard">Quiz Results</h2>
                 <div id="leaderboard"></div>
-                <button onclick="showMyQuizzes()">Back to My Quizzes</button>
+                <button onclick="showMyQuizzes()" data-i18n="back_to_quizzes">Back to My Quizzes</button>
             </div>
         </main>
     </div>

@@ -65,6 +65,7 @@ const translations = {
     add_variant: "Variant qo'shish",
     correct: "To'g'ri",
     remove_question: "Savolni o'chirish",
+    enter_media_url: "Rasm/Video URL manzilini kiriting",
 
     // My Quizzes
     my_quizzes_title: "Mening Testlarim",
@@ -96,7 +97,9 @@ const translations = {
     error_occurred: "Xatolik yuz berdi",
     loading: "Yuklanmoqda...",
     no_quizzes: "Hozircha testlar yo'q",
-    
+    quiz_completed: "Test Tugadi!",
+    your_score: "Sizning Ballingiz",
+
     // Additional buttons and actions
     big_screen: "Katta ekran",
     stop_live: "To'xtatish",
@@ -113,6 +116,9 @@ const translations = {
     question_number: "Savol",
     variant: "Variant",
     add_media: "Yana Media Qo'shish",
+    back_to_quizzes: "Testlarga Qaytish",
+    home: "Bosh Sahifa",
+    remove: "O'chirish",
   },
 
   ru: {
@@ -180,6 +186,7 @@ const translations = {
     add_variant: "Добавить вариант",
     correct: "Правильный",
     remove_question: "Удалить вопрос",
+    enter_media_url: "Введите URL изображения/видео",
 
     // My Quizzes
     my_quizzes_title: "Мои Тесты",
@@ -211,7 +218,9 @@ const translations = {
     error_occurred: "Произошла ошибка",
     loading: "Загрузка...",
     no_quizzes: "Пока нет тестов",
-    
+    quiz_completed: "Тест Завершен!",
+    your_score: "Ваш Результат",
+
     // Additional buttons and actions
     big_screen: "Большой экран",
     stop_live: "Остановить",
@@ -228,6 +237,9 @@ const translations = {
     question_number: "Вопрос",
     variant: "Вариант",
     add_media: "Добавить Еще Медиа",
+    back_to_quizzes: "Вернуться к Тестам",
+    home: "Главная",
+    remove: "Удалить",
   },
 
   en: {
@@ -295,6 +307,7 @@ const translations = {
     add_variant: "Add Variant",
     correct: "Correct",
     remove_question: "Remove Question",
+    enter_media_url: "Enter image/video URL",
 
     // My Quizzes
     my_quizzes_title: "My Quizzes",
@@ -326,7 +339,9 @@ const translations = {
     error_occurred: "An error occurred",
     loading: "Loading...",
     no_quizzes: "No quizzes yet",
-    
+    quiz_completed: "Quiz Completed!",
+    your_score: "Your Score",
+
     // Additional buttons and actions
     big_screen: "Big Screen",
     stop_live: "Stop Live",
@@ -343,6 +358,9 @@ const translations = {
     question_number: "Question",
     variant: "Variant",
     add_media: "Add Another Media",
+    back_to_quizzes: "Back to My Quizzes",
+    home: "Home",
+    remove: "Remove",
   },
 };
 
