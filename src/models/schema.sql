@@ -7,10 +7,12 @@ DROP TABLE IF EXISTS users CASCADE;
 DROP TYPE IF EXISTS user_role CASCADE;
 DROP TYPE IF EXISTS quiz_status CASCADE;
 DROP TYPE IF EXISTS quiz_mode CASCADE;
+DROP TYPE IF EXISTS quiz_language CASCADE;
 
 CREATE TYPE user_role AS ENUM ('student', 'admin');
 CREATE TYPE quiz_status AS ENUM ('pending', 'live', 'finished');
 CREATE TYPE quiz_mode AS ENUM ('synchronized', 'self_paced_immediate', 'self_paced_end');
+CREATE TYPE quiz_language AS ENUM ('uz', 'ru', 'en');
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -28,6 +30,7 @@ CREATE TABLE quizzes (
     creator_id INTEGER REFERENCES users(id),
     status quiz_status NOT NULL DEFAULT 'pending',
     mode quiz_mode NOT NULL DEFAULT 'self_paced_immediate',
+    language quiz_language NOT NULL DEFAULT 'uz',
     current_question_index INTEGER DEFAULT 0,
     is_paused BOOLEAN DEFAULT FALSE,
     show_correct_answer BOOLEAN DEFAULT TRUE,
