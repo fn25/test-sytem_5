@@ -13,7 +13,7 @@
   },
   "name": "test",
   "version": "1.0.0",
-  "description": "",
+  "description": "Full-stack quiz platform with real-time features, image/video support, and presentation mode.",
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
@@ -25,5 +25,13 @@
   "license": "ISC",
   "devDependencies": {
     "nodemon": "^3.1.10"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fn25/test-sytem_5.git"
+  },
+  "bugs": {
+    "url": "https://github.com/fn25/test-sytem_5/issues"
+  },
+  "homepage": "https://github.com/fn25/test-sytem_5#readme"
 }
