@@ -394,7 +394,7 @@ async function createQuiz(event) {
   }
 
   submitBtn.disabled = true;
-  submitBtn.textContent = "Creating...";
+  submitBtn.textContent = t("creating");
 
   const title = document.getElementById("quizTitle").value;
   const mode = document.getElementById("quizMode").value;
@@ -478,19 +478,19 @@ async function createQuiz(event) {
       document.getElementById("questionsContainer").innerHTML = "";
       addQuestion();
       submitBtn.disabled = false;
-      submitBtn.textContent = "Create Quiz";
+      submitBtn.textContent = t('create');
 
-      alert("✅ Test muvaffaqiyatli yaratildi!");
+      alert(t('quiz_created'));
       showMyQuizzes();
     } else {
       console.error("Failed to create quiz:", data.message);
       submitBtn.disabled = false;
-      submitBtn.textContent = "Create Quiz";
+      submitBtn.textContent = t('create');
     }
   } catch (error) {
     console.error("Error:", error);
     submitBtn.disabled = false;
-    submitBtn.textContent = "Create Quiz";
+    submitBtn.textContent = t('create');
   }
 }
 

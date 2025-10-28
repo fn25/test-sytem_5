@@ -27,10 +27,39 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 header h1 {
     font-size: 2em;
+}
+
+.language-selector {
+    display: flex;
+    align-items: center;
+}
+
+.language-selector select {
+    background: white;
+    color: #667eea;
+    border: 2px solid white;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 1em;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.language-selector select:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.language-selector select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255,255,255,0.3);
 }
 
 button {
@@ -420,6 +449,13 @@ h3 {
 
     header h1 {
         font-size: 1.5em;
+    }
+
+    .language-selector select {
+        padding: 10px 15px;
+        font-size: 1em;
+        width: 100%;
+        max-width: 200px;
     }
 
     main {

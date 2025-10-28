@@ -25,109 +25,116 @@
 <body>
     <div class="container">
         <header>
-            <h1>Quiz App</h1>
+            <h1 data-i18n="app_title">Quiz App</h1>
+            <div class="language-selector">
+                <select id="siteLanguage" onchange="changeSiteLanguage()">
+                    <option value="uz">🇺🇿 O'zbek</option>
+                    <option value="ru">🇷🇺 Русский</option>
+                    <option value="en">🇬🇧 English</option>
+                </select>
+            </div>
             <div id="authSection">
-                <button onclick="showRegister()">Register</button>
-                <button onclick="showLogin()">Login</button>
+                <button onclick="showRegister()" data-i18n="register">Register</button>
+                <button onclick="showLogin()" data-i18n="login">Login</button>
             </div>
             <div id="userSection" style="display:none;">
                 <span id="username"></span>
-                <button onclick="logout()">Logout</button>
+                <button onclick="logout()" data-i18n="logout">Logout</button>
             </div>
         </header>
 
         <main id="mainContent">
             <div id="homeSection">
-                <h2>Welcome to Quiz App</h2>
+                <h2 data-i18n="welcome">Welcome to Quiz App</h2>
                 <div class="action-buttons">
-                    <button onclick="showJoinQuiz()">Join Quiz</button>
-                    <button onclick="showCreateQuiz()" id="createQuizBtn" style="display:none;">Create Quiz</button>
-                    <button onclick="showMyQuizzes()" id="myQuizzesBtn" style="display:none;">My Quizzes</button>
+                    <button onclick="showJoinQuiz()" data-i18n="join_quiz">Join Quiz</button>
+                    <button onclick="showCreateQuiz()" id="createQuizBtn" style="display:none;" data-i18n="create_quiz">Create Quiz</button>
+                    <button onclick="showMyQuizzes()" id="myQuizzesBtn" style="display:none;" data-i18n="my_quizzes">My Quizzes</button>
                 </div>
             </div>
 
             <div id="registerSection" style="display:none;">
-                <h2>Register</h2>
+                <h2 data-i18n="register_title">Register</h2>
                 <form onsubmit="register(event)">
                     <div class="form-group">
-                        <label for="regUsername">Username</label>
-                        <input type="text" id="regUsername" placeholder="Enter your username" required>
+                        <label for="regUsername" data-i18n="username">Username</label>
+                        <input type="text" id="regUsername" data-i18n="enter_username" placeholder="Enter your username" required>
                     </div>
                     <div class="form-group">
-                        <label for="regEmail">Email</label>
-                        <input type="email" id="regEmail" placeholder="Enter your email" required>
+                        <label for="regEmail" data-i18n="email">Email</label>
+                        <input type="email" id="regEmail" data-i18n="enter_email" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                        <label for="regPassword">Password</label>
-                        <input type="password" id="regPassword" placeholder="Enter your password" required>
+                        <label for="regPassword" data-i18n="password">Password</label>
+                        <input type="password" id="regPassword" data-i18n="enter_password" placeholder="Enter your password" required>
                     </div>
                     <div class="form-group">
-                        <label for="regRole">Role</label>
-                        <select id="regRole">
-                            <option value="student">Student</option>
-                            <option value="admin">Admin</option>
+                        <label for="regRole" data-i18n="role">Role</label>
+                        <select id="regRole" data-i18n-options>
+                            <option value="student" data-i18n="student">Student</option>
+                            <option value="admin" data-i18n="admin">Admin</option>
                         </select>
                     </div>
-                    <button type="submit">Register</button>
-                    <button type="button" onclick="showHome()">Cancel</button>
+                    <button type="submit" data-i18n="register">Register</button>
+                    <button type="button" onclick="showHome()" data-i18n="cancel">Cancel</button>
                 </form>
             </div>
 
             <div id="loginSection" style="display:none;">
-                <h2>Login</h2>
+                <h2 data-i18n="login_title">Login</h2>
                 <form onsubmit="login(event)">
                     <div class="form-group">
-                        <label for="loginEmail">Email</label>
-                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
+                        <label for="loginEmail" data-i18n="email">Email</label>
+                        <input type="email" id="loginEmail" data-i18n="enter_email" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                        <label for="loginPassword">Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
+                        <label for="loginPassword" data-i18n="password">Password</label>
+                        <input type="password" id="loginPassword" data-i18n="enter_password" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit">Login</button>
-                    <button type="button" onclick="showHome()">Cancel</button>
+                    <button type="submit" data-i18n="login">Login</button>
+                    <button type="button" onclick="showHome()" data-i18n="cancel">Cancel</button>
                 </form>
             </div>
 
             <div id="joinQuizSection" style="display:none;">
-                <h2>Join Quiz</h2>
+                <h2 data-i18n="join_quiz_title">Join Quiz</h2>
                 <form onsubmit="joinQuiz(event)">
                     <div class="form-group">
-                        <label for="quizCode">Quiz Code</label>
-                        <input type="text" id="quizCode" placeholder="Enter 6-digit quiz code" required>
+                        <label for="quizCode" data-i18n="quiz_code">Quiz Code</label>
+                        <input type="text" id="quizCode" data-i18n="enter_code" placeholder="Enter 6-digit quiz code" required>
                     </div>
                     <div class="form-group">
-                        <label for="guestUsername">Your Name</label>
-                        <input type="text" id="guestUsername" placeholder="Enter your name" required>
+                        <label for="guestUsername" data-i18n="your_name">Your Name</label>
+                        <input type="text" id="guestUsername" data-i18n="enter_name" placeholder="Enter your name" required>
                     </div>
-                    <button type="submit">Join</button>
-                    <button type="button" onclick="showHome()">Cancel</button>
+                    <button type="submit" data-i18n="join">Join</button>
+                    <button type="button" onclick="showHome()" data-i18n="cancel">Cancel</button>
                 </form>
             </div>
 
             <div id="createQuizSection" style="display:none;">
-                <h2>Create Quiz</h2>
+                <h2 data-i18n="create_quiz_title">Create Quiz</h2>
                 <form id="createQuizForm" onsubmit="createQuiz(event)">
                     <div class="form-group">
-                        <label for="quizTitle">Quiz Title</label>
-                        <input type="text" id="quizTitle" placeholder="Enter quiz title" required>
+                        <label for="quizTitle" data-i18n="quiz_title">Quiz Title</label>
+                        <input type="text" id="quizTitle" data-i18n="enter_quiz_title" placeholder="Enter quiz title" required>
                     </div>
                     
                     <div class="form-group">
-                        <label for="quizMode">Test Rejimi</label>
-                        <select id="quizMode" required>
-                            <option value="synchronized">Sinxronlashgan (Admin boshqaradi)</option>
-                            <option value="self_paced_immediate" selected>O'z tezligida (Javoblar darhol)</option>
-                            <option value="self_paced_end">O'z tezligida (Javoblar oxirida)</option>
+                        <label for="quizMode" data-i18n="quiz_mode">Test Rejimi</label>
+                        <select id="quizMode" required data-i18n-options>
+                            <option value="synchronized" data-i18n="mode_synchronized">Sinxronlashgan (Admin boshqaradi)</option>
+                            <option value="self_paced_immediate" selected data-i18n="mode_self_paced_immediate">O'z tezligida (Javoblar darhol)</option>
+                            <option value="self_paced_end" data-i18n="mode_self_paced_end">O'z tezligida (Javoblar oxirida)</option>
                         </select>
                     </div>
 
                     <div class="form-group">
-                        <label for="quizLanguage">Test Tili</label>
-                        <select id="quizLanguage" required>
-                            <option value="uz" selected>O'zbek tili</option>
-                            <option value="ru">Русский язык</option>
-                            <option value="en">English</option>
+                        <label for="quizLanguage" data-i18n="quiz_language">Test Tili</label>
+                        <select id="quizLanguage" required data-i18n-options>
+                            <option value="uz" selected data-i18n="lang_uzbek">O'zbek tili</option>
+                            <option value="ru" data-i18n="lang_russian">Русский язык</option>
+                            <option value="en" data-i18n="lang_english">English</option>
                         </select>
                     </div>
                     
@@ -264,6 +271,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="/js/translations.js"></script>
     <script src="/js/app.js"></script>
 </body>
 </html>
